@@ -6,12 +6,16 @@ import org.js.checkoutcomponent.model.CheckoutResponse;
 import org.js.checkoutcomponent.model.ItemPrice;
 import org.js.checkoutcomponent.service.checkout.data.Item;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
+import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CheckoutService {
@@ -19,9 +23,8 @@ public class CheckoutService {
     private ItemsDAO itemsDAO;
 
     public CheckoutResponse calculateTotalPrice(CheckoutRequest request) {
-        List<CartItem> items = request.getItems();
 
-        Result result = calculate(request);
+        Result result = calculateTotalPriceWithItemDiscounts(request);
 
         CheckoutResponse response = new CheckoutResponse();
 
@@ -30,18 +33,21 @@ public class CheckoutService {
         return response;
     }
 
-    Result calculate(CheckoutRequest request) {
+    Result calculateTotalPriceWithItemDiscounts(CheckoutRequest request) {
         List<ItemPrice> itemPrices = new ArrayList<>();
         double totalPrice = 0;
 
+        Set<String> itemIds = request.getItems().stream().map(e -> e.getItemId()).collect(Collectors.toSet());
+        Map<String, ItemEntity> itemsMap = itemsDAO.getItems((itemIds));
+
         for (CartItem cartItem : request.getItems()) {
             //FIXME Need to add dataBase implementation
-            Item item = new Item();
+            ItemEntity item = itemsMap.get(cartItem.getItemId());
             if (item == null) {
                 throw new IllegalArgumentException("Invalid item ID: " + cartItem.getItemId());
             }
 
-            BigDecimal itemTotal = calculateItemPrice(item, cartItem.getQuantity());
+            //BigDecimal itemTotal = calculateItemPrice(item, cartItem.getQuantity());
             /*totalPrice += itemTotal;
 
             ItemPrice itemPrice = new ItemPrice();
@@ -67,6 +73,6 @@ public class CheckoutService {
             .add(normalPrice.multiply(BigDecimal.valueOf(remainingItems)));
     }
 
-    private record Result(List<ItemPrice> itemPrices, double totalPrice) {
+    record Result(List<ItemPrice> itemPrices, double totalPrice) {
     }
 }

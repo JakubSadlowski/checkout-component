@@ -1,0 +1,99 @@
+openapi: 3.0.0
+info:
+  title: Checkout API
+  description: API for calculating shopping cart totals with special pricing rules
+  version: "3.0"
+
+paths:
+  /api/checkout:
+    post:
+      summary: Calculate total price for cart items
+      description: Calculates the total price considering bulk discounts and bundle offers
+      operationId: calculateTotal
+      tags:
+        - checkout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+      responses:
+        '200':
+          description: Successful price calculation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid item ID: X"
+
+components:
+  schemas:
+    CartItem:
+      type: object
+      required:
+        - itemId
+        - quantity
+      properties:
+        itemId:
+          type: string
+          example: "A"
+          description: Product identifier
+        quantity:
+          type: integer
+          minimum: 1
+          example: 3
+          description: Number of items
+
+    CheckoutRequest:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+          description: List of items in the cart
+
+    ItemPrice:
+      type: object
+      properties:
+        itemId:
+          type: string
+          example: "A"
+        quantity:
+          type: integer
+          example: 3
+        price:
+          type: number
+          format: double
+          example: 90.0
+
+    CheckoutResponse:
+      type: object
+      properties:
+        totalPrice:
+          type: number
+          format: double
+          example: 90.0
+          description: Total price after all discounts
+        itemPrices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemPrice'
+          description: Detailed breakdown of prices per item
+        bundleDiscountApplied:
+          type: number
+          format: double
+          example: 5.0
+          description: Total bundle discounts applied

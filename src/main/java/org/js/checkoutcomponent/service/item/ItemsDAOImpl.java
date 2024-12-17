@@ -7,15 +7,17 @@ import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ItemsDAOImpl implements ItemsDAO {
 
     @Override
-    public List<ItemEntity> getItems(Set<String> itemIds) {
+    public Map<String, ItemEntity> getItems(Set<String> itemIds) {
         return getAllItems().stream()
             .filter(e -> itemIds.contains(e.getId()))
-            .toList();
+            .collect(Collectors.toMap(ItemEntity::getId, item -> item));
     }
 
     @Override

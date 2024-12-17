@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,14 +31,14 @@ class ItemsDAOImplTest {
         Set<String> itemIds = Set.of(itemId1, itemId2);
 
         // When
-        List<ItemEntity> items = dao.getItems(itemIds);
+        Map<String ,ItemEntity> items = dao.getItems(itemIds);
 
         // Then
         assertEquals(2, items.size());
-        ItemEntity itemA = items.get(0);
+        ItemEntity itemA = items.get(itemId1);
         ItemEntity expectedItem1 = ItemsMock.itemsMap.get(itemId1);
         assertEquals(expectedItem1, itemA);
-        ItemEntity itemC = items.get(1);
+        ItemEntity itemC = items.get(itemId2);
         ItemEntity expectedItem2 = ItemsMock.itemsMap.get(itemId2);
         assertEquals(expectedItem2, itemC);
 

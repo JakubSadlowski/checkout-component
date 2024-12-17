@@ -7,7 +7,7 @@
 
     <groupId>org.js</groupId>
     <artifactId>checkout-component</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
     <name>checkout-component</name>
 
     <parent>

@@ -10,6 +10,6 @@ import java.util.Set;
 
 public interface ItemsDAO {
     List<ItemEntity> getItems(Set<String> itemIds);
-    List<ItemDiscountEntity> getItemDiscounts(String itemId);
-    List<BundleDiscountEntity> getBundleDiscounts(String bundleId);
+    List<ItemDiscountEntity> getItemDiscounts(Set<String> itemIds);
+    List<BundleDiscountEntity> getBundleDiscounts(Set<String> itemIds);
 }

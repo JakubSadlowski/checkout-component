@@ -19,12 +19,14 @@ public class ItemsDAOImpl implements ItemsDAO {
     }
 
     @Override
-    public List<ItemDiscountEntity> getItemDiscounts(String itemId) {
-        return List.of();
+    public List<ItemDiscountEntity> getItemDiscounts(Set<String> itemIds) {
+        return getAllItemDiscounts().stream()
+            .filter(e -> itemIds.contains(e.getItemId()))
+            .toList();
     }
 
     @Override
-    public List<BundleDiscountEntity> getBundleDiscounts(String bundleId) {
+    public List<BundleDiscountEntity> getBundleDiscounts(Set<String> itemIds) {
         return List.of();
     }
 
@@ -33,34 +35,7 @@ public class ItemsDAOImpl implements ItemsDAO {
     }
 
     private List<ItemDiscountEntity> getAllItemDiscounts() {
-        return List.of(ItemDiscountEntity.builder()
-                .id("1")
-                .itemId("A")
-                .specialPrice(new BigDecimal("30.0"))
-                .quantity(3)
-                .validFrom(LocalDate.of(2024, 01, 21))
-                .build(),
-            ItemDiscountEntity.builder()
-                .id("2")
-                .itemId("B")
-                .specialPrice(new BigDecimal("7.5"))
-                .quantity(3)
-                .validFrom(LocalDate.of(2024, 05, 23))
-                .build(),
-            ItemDiscountEntity.builder()
-                .id("3")
-                .itemId("C")
-                .specialPrice(new BigDecimal("20.0"))
-                .quantity(3)
-                .validFrom(LocalDate.of(2024, 01, 10))
-                .build(),
-            ItemDiscountEntity.builder()
-                .id("4")
-                .itemId("D")
-                .specialPrice(new BigDecimal("23.5"))
-                .quantity(3)
-                .validFrom(LocalDate.of(2024, 02, 25))
-                .build());
+        return List.of(ItemsMockedRepository.DISCOUNT_A, ItemsMockedRepository.DISCOUNT_B, ItemsMockedRepository.DISCOUNT_C, ItemsMockedRepository.DISCOUNT_D);
     }
 
     private List<BundleDiscountEntity> getAllBundleDiscounts() {

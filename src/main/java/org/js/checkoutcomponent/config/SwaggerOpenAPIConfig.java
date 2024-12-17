@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
 
-@OpenAPIDefinition(servers = @Server(url = "/", description = "Server URL"))
+@OpenAPIDefinition(servers = @Server(url = "/", description = "https://localhost:8092"))
 @Configuration
 @RequiredArgsConstructor
 public class SwaggerOpenAPIConfig {
@@ -28,7 +28,7 @@ public class SwaggerOpenAPIConfig {
 
     private Info apiInfo() {
         return new Info().title("Checkout Component 3.0")
-                .description("Checkout component.")
+                .description("API for calculating shopping cart totals with special pricing rules.")
                 .version(createProperties().getVersion());
     }
 }

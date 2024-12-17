@@ -1,34 +1,45 @@
 package org.js.checkoutcomponent.api;
 
-import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.js.checkoutcomponent.model.ItemPrice;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.openapitools.model.CalculateTotal400Response;
+import org.openapitools.model.CheckoutRequest;
+import org.openapitools.model.CheckoutResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("checkout-component")
+@Validated
+@Tag(name = "checkout", description = "Checkout API")
 public class CheckoutComponentController {
 
-    @GetMapping("/items")
-    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            operationId = "calculateTotal",
+            summary = "Calculate total price for cart items",
+            description = "Calculates the total price considering bulk discounts and bundle offers"
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success - Item returned", content = {@Content(mediaType = APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ItemPrice.class))},
-                    headers = {@Header(name = "X-REQUEST-ID", schema = @Schema(implementation = String.class))}),
-            @ApiResponse(responseCode = "404", description = "Item not found", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema =
-            @Schema(implementation = ItemPrice.class))},
-                    headers = {@Header(name = "X-REQUEST-ID", schema = @Schema(implementation = String.class))}),
-
+            @ApiResponse(responseCode = "200", description = "Successful price calculation",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CheckoutResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CalculateTotal400Response.class)))
     })
-    public ResponseEntity<ItemPrice> getItem() {
+    @PostMapping("/checkout")
+    public ResponseEntity<CheckoutResponse> calculateTotal(
+            @Parameter(description = "Checkout request with items", required = true)
+            @Valid @RequestBody CheckoutRequest checkoutRequest) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
-
 }

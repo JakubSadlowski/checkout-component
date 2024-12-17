@@ -1,7 +1,10 @@
 package org.js.checkoutcomponent.model;
 
+import lombok.Data;
+
+import java.util.List;
+
+@Data
 public class CheckoutRequest {
-    public CheckoutRequest createRequest() {
-        return new CheckoutRequest();
-    }
+    private List<CartItem> items;
 }

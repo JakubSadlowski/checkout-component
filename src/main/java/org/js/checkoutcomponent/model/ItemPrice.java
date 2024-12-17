@@ -1,7 +1,10 @@
 package org.js.checkoutcomponent.model;
 
+import lombok.Data;
+
+@Data
 public class ItemPrice {
-    private int id;
-    private String name;
+    private String itemId;
+    private int quantity;
     private double price;
 }

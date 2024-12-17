@@ -36,7 +36,7 @@ public class CheckoutComponentController {
                             schema = @Schema(implementation = CalculateTotal400Response.class)))*/
     })
     @PostMapping("/checkout")
-    public ResponseEntity<org.js.checkoutcomponent.model.CheckoutResponse> calculateTotal(
+    public ResponseEntity<CheckoutResponse> calculateTotal(
             @Parameter(description = "Checkout request with items", required = true)
             @Valid @RequestBody CheckoutRequest checkoutRequest) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);

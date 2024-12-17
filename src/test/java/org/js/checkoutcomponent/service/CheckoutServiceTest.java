@@ -1,50 +1,41 @@
 package org.js.checkoutcomponent.service;
 
+import org.js.checkoutcomponent.config.DAOConfig;
 import org.js.checkoutcomponent.service.checkout.data.Item;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 
+import java.math.BigDecimal;
+
+@SpringBootTest
+@ContextConfiguration(classes = { CheckoutService.class, DAOConfig.class })
 class CheckoutServiceTest {
+    @Autowired
     private CheckoutService checkoutService;
-    private Item itemA, itemB, itemC, itemD;
 
-    @BeforeEach
-    void setUp() {
-        checkoutService = new CheckoutService();
-
-        itemA = new Item();
-        itemA.setId("A");
-        itemA.setNormalPrice(40);
-        itemA.setSpecialPrice(30);
-        itemA.setRequiredQuantity(3);
-
-        itemB = new Item();
-        itemB.setId("B");
-        itemB.setNormalPrice(10);
-        itemB.setSpecialPrice(7.5);
-        itemB.setRequiredQuantity(2);
-
-        itemC = new Item();
-        itemC.setId("C");
-        itemC.setNormalPrice(30);
-        itemC.setSpecialPrice(20);
-        itemC.setRequiredQuantity(4);
-
-        itemD = new Item();
-        itemD.setId("D");
-        itemD.setNormalPrice(25);
-        itemD.setSpecialPrice(23.5);
-        itemD.setRequiredQuantity(2);
-    }
-
-    @Test
-    void calculateItemPriceTest() {
+    @ParameterizedTest
+    @CsvSource({
+        "20.5, 10.0, 2, 5, 60.5",
+        "13.5, 2.0, 3, 4, 19.5"
+    })
+    void calculateItemPriceTest(String normalPrice, String specialPrice, String requiredQuantity, String quantity, String expectedTotalPrice) {
         // Given
-        int quantity = 4;
+        BigDecimal normalPriceConverted = new BigDecimal(normalPrice);
+        BigDecimal specialPriceConverted = new BigDecimal(specialPrice);
+        int requiredQuantityConverted = Integer.parseInt(requiredQuantity);
+        int quantityConverted = Integer.parseInt(quantity);
+        BigDecimal expectedTotalPriceConverted = new BigDecimal(expectedTotalPrice);
 
         // When
-
+        BigDecimal totalPrice = checkoutService.calculateItemPrice(normalPriceConverted, specialPriceConverted, requiredQuantityConverted, quantityConverted);
 
         // Then
+        Assertions.assertEquals(expectedTotalPriceConverted, totalPrice);
     }
 }

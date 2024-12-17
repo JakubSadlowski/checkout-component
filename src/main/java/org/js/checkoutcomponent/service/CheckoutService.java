@@ -9,6 +9,7 @@ import org.js.checkoutcomponent.service.item.ItemsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,16 @@ public class CheckoutService {
     public CheckoutResponse calculateTotalPrice(CheckoutRequest request) {
         List<CartItem> items = request.getItems();
 
+        Result result = calculate(request);
+
+        CheckoutResponse response = new CheckoutResponse();
+
+        response.setTotalPrice(result.totalPrice());
+        response.setItemPrices(result.itemPrices());
+        return response;
+    }
+
+    Result calculate(CheckoutRequest request) {
         List<ItemPrice> itemPrices = new ArrayList<>();
         double totalPrice = 0;
 
@@ -30,28 +41,32 @@ public class CheckoutService {
                 throw new IllegalArgumentException("Invalid item ID: " + cartItem.getItemId());
             }
 
-            double itemTotal = calculateItemPrice(item, cartItem.getQuantity());
-            totalPrice += itemTotal;
+            BigDecimal itemTotal = calculateItemPrice(item, cartItem.getQuantity());
+            /*totalPrice += itemTotal;
 
             ItemPrice itemPrice = new ItemPrice();
             itemPrice.setItemId(cartItem.getItemId());
             itemPrice.setQuantity(cartItem.getQuantity());
             itemPrice.setPrice(itemTotal);
-            itemPrices.add(itemPrice);
+            itemPrices.add(itemPrice);*/
         }
-
-        CheckoutResponse response = new CheckoutResponse();
-
-        response.setTotalPrice(totalPrice);
-        response.setItemPrices(itemPrices);
-        return response;
+        Result result = new Result(itemPrices, totalPrice);
+        return result;
     }
 
-    private double calculateItemPrice(Item item, int quantity) {
-        int specialPriceGroups = quantity / item.getRequiredQuantity();
-        int remainingItems = quantity % item.getRequiredQuantity();
+    BigDecimal calculateItemPrice(Item item, int quantity) {
+        return calculateItemPrice(item.getNormalPrice(), item.getSpecialPrice(), item.getRequiredQuantity(), quantity);
+    }
 
-        return (specialPriceGroups * item.getSpecialPrice() * item.getRequiredQuantity()) +
-                (remainingItems * item.getNormalPrice());
+    BigDecimal calculateItemPrice(BigDecimal normalPrice, BigDecimal specialPrice, int requiredQuantity, int quantity) {
+        int specialPriceGroups = quantity / requiredQuantity;
+        int remainingItems = quantity % requiredQuantity;
+
+        return specialPrice.multiply(BigDecimal.valueOf(requiredQuantity))
+            .multiply(BigDecimal.valueOf(specialPriceGroups))
+            .add(normalPrice.multiply(BigDecimal.valueOf(remainingItems)));
+    }
+
+    private record Result(List<ItemPrice> itemPrices, double totalPrice) {
     }
 }

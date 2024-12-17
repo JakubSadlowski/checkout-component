@@ -3,8 +3,6 @@ package org.js.checkoutcomponent.service.item;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 

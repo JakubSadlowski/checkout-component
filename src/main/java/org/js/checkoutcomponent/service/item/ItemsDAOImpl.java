@@ -6,14 +6,16 @@ import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class ItemsDAOImpl implements ItemsDAO {
 
     @Override
-    public List<ItemEntity> getItems(List<String> itemIds) {
-        return List.of();
+    public List<ItemEntity> getItems(Set<String> itemIds) {
+        return getAllItems().stream()
+            .filter(e -> itemIds.contains(e.getId()))
+            .toList();
     }
 
     @Override
@@ -27,9 +29,78 @@ public class ItemsDAOImpl implements ItemsDAO {
     }
 
     private List<ItemEntity> getAllItems() {
-        return List.of(ItemEntity.builder().id("A").name("Perfumes").normalPrice(new BigDecimal("40.0")).createDate(new Date()).updateDate(new Date()).build(),
-                ItemEntity.builder().id("B").name("Soap").normalPrice(new BigDecimal("10.0")).createDate(new Date()).updateDate(new Date()).build(),
-                ItemEntity.builder().id("C").name("Shampoo").normalPrice(new BigDecimal("30.0")).createDate(new Date()).updateDate(new Date()).build(),
-                ItemEntity.builder().id("D").name("Towel").normalPrice(new BigDecimal("25.0")).createDate(new Date()).updateDate(new Date()).build());
+        return List.of(ItemEntity.builder()
+                .id("A")
+                .name("Perfumes")
+                .normalPrice(new BigDecimal("40.0"))
+                .build(),
+            ItemEntity.builder()
+                .id("B")
+                .name("Soap")
+                .normalPrice(new BigDecimal("10.0"))
+                .build(),
+            ItemEntity.builder()
+                .id("C")
+                .name("Shampoo")
+                .normalPrice(new BigDecimal("30.0"))
+                .build(),
+            ItemEntity.builder()
+                .id("D")
+                .name("Towel")
+                .normalPrice(new BigDecimal("25.0"))
+                .build(),
+            ItemEntity.builder()
+                .id("E")
+                .name("Creme")
+                .normalPrice(new BigDecimal("13.0"))
+                .build());
+    }
+
+    private List<ItemDiscountEntity> getAllItemDiscounts() {
+        return List.of(ItemDiscountEntity.builder()
+                .id("1")
+                .itemId("A")
+                .specialPrice(new BigDecimal("30.0"))
+                .quantity(3)
+                .validFrom(LocalDate.of(2024, 01, 21))
+                .build(),
+            ItemDiscountEntity.builder()
+                .id("2")
+                .itemId("B")
+                .specialPrice(new BigDecimal("7.5"))
+                .quantity(3)
+                .validFrom(LocalDate.of(2024, 05, 23))
+                .build(),
+            ItemDiscountEntity.builder()
+                .id("3")
+                .itemId("C")
+                .specialPrice(new BigDecimal("20.0"))
+                .quantity(3)
+                .validFrom(LocalDate.of(2024, 01, 10))
+                .build(),
+            ItemDiscountEntity.builder()
+                .id("4")
+                .itemId("D")
+                .specialPrice(new BigDecimal("23.5"))
+                .quantity(3)
+                .validFrom(LocalDate.of(2024, 02, 25))
+                .build());
+    }
+
+    private List<BundleDiscountEntity> getAllBundleDiscounts() {
+        return List.of(BundleDiscountEntity.builder()
+                .id("1")
+                .fromItemId("A")
+                .toItemId("B")
+                .discountPrice(new BigDecimal("20.0"))
+                .validFrom(LocalDate.of(2024, 02, 15))
+                .build(),
+            BundleDiscountEntity.builder()
+                .id("2")
+                .fromItemId("C")
+                .toItemId("D")
+                .discountPrice(new BigDecimal("10.0"))
+                .validFrom(LocalDate.of(2024, 01, 11))
+                .build());
     }
 }

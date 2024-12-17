@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -12,6 +12,8 @@ public class ItemEntity {
     private String id;
     private String name;
     private BigDecimal normalPrice;
-    private Date createDate;
-    private Date updateDate;
+    @Builder.Default
+    private LocalDate createDate = LocalDate.now();
+    @Builder.Default
+    private LocalDate updateDate = LocalDate.now();
 }

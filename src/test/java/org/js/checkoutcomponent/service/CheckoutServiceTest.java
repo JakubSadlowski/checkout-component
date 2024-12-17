@@ -1,11 +1,8 @@
-package org.js.checkoutcomponent.service.checkout.service;
+package org.js.checkoutcomponent.service;
 
 import org.js.checkoutcomponent.service.checkout.data.Item;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CheckoutServiceTest {
     private CheckoutService checkoutService;

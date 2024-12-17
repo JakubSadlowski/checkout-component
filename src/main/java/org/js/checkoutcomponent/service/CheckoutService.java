@@ -1,4 +1,4 @@
-package org.js.checkoutcomponent.service.checkout.service;
+package org.js.checkoutcomponent.service;
 
 import org.js.checkoutcomponent.model.CartItem;
 import org.js.checkoutcomponent.model.CheckoutRequest;

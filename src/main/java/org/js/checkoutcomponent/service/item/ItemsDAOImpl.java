@@ -29,31 +29,7 @@ public class ItemsDAOImpl implements ItemsDAO {
     }
 
     private List<ItemEntity> getAllItems() {
-        return List.of(ItemEntity.builder()
-                .id("A")
-                .name("Perfumes")
-                .normalPrice(new BigDecimal("40.0"))
-                .build(),
-            ItemEntity.builder()
-                .id("B")
-                .name("Soap")
-                .normalPrice(new BigDecimal("10.0"))
-                .build(),
-            ItemEntity.builder()
-                .id("C")
-                .name("Shampoo")
-                .normalPrice(new BigDecimal("30.0"))
-                .build(),
-            ItemEntity.builder()
-                .id("D")
-                .name("Towel")
-                .normalPrice(new BigDecimal("25.0"))
-                .build(),
-            ItemEntity.builder()
-                .id("E")
-                .name("Creme")
-                .normalPrice(new BigDecimal("13.0"))
-                .build());
+        return List.of(ItemsMockedRepository.ITEM_A, ItemsMockedRepository.ITEM_B, ItemsMockedRepository.ITEM_C, ItemsMockedRepository.ITEM_D, ItemsMockedRepository.ITEM_E);
     }
 
     private List<ItemDiscountEntity> getAllItemDiscounts() {

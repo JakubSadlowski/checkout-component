@@ -29,9 +29,9 @@ class ItemsDAOImplTest {
         // Then
         assertEquals(2, items.size());
         ItemEntity itemA = items.get(0);
-        assertEquals("A", itemA.getId());
+        assertEquals(ItemsMock.ITEM_A, itemA);
         ItemEntity itemC = items.get(1);
-        assertEquals("C", itemC.getId());
+        assertEquals(ItemsMock.ITEM_C, itemC);
     }
 
 }

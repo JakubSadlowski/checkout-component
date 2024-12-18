@@ -4,8 +4,6 @@ import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,11 +19,7 @@ public class ItemsDAOImpl implements ItemsDAO {
     }
 
     public Map<String, ItemDiscountEntity> getItemDiscounts(Set<String> itemIds) {
-        List<ItemDiscountEntity> allDiscounts = getAllItemDiscounts();
-        System.out.println("All discounts: " + allDiscounts);
-        System.out.println("Requested IDs: " + itemIds);
-
-        return allDiscounts.stream()
+        return getAllItemDiscounts().stream()
             .filter(e -> itemIds.contains(e.getItemId()))
             .collect(Collectors.toMap(ItemDiscountEntity::getItemId, discount -> discount));
     }

@@ -21,9 +21,6 @@ Below is an image from draw.io of the component checkout service.
 - **`item_discounts`**: Table for storing special price of every item and required quantity for that special price to be applied.
 - **`bundle_discounts`**: Table for storing bundles consisting of two items and their discount.
 
-## Service
-
-
 ### Endpoints
-| POST | /checkout-component/checkout |
-|------|------------------------------|
+| POST | /api/checkout |
+|------|---------------|

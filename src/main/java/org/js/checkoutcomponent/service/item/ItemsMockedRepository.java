@@ -6,7 +6,6 @@ import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 class ItemsMockedRepository {
     // Items
@@ -73,20 +72,20 @@ class ItemsMockedRepository {
         .validFrom(LocalDate.of(2024, 02, 25))
         .build();
 
-    /*private List<BundleDiscountEntity> getAllBundleDiscounts() {
-        return List.of(BundleDiscountEntity.builder()
-                .id("1")
-                .fromItemId("A")
-                .toItemId("B")
-                .discountPrice(new BigDecimal("20.0"))
-                .validFrom(LocalDate.of(2024, 02, 15))
-                .build(),
-            BundleDiscountEntity.builder()
-                .id("2")
-                .fromItemId("C")
-                .toItemId("D")
-                .discountPrice(new BigDecimal("10.0"))
-                .validFrom(LocalDate.of(2024, 01, 11))
-                .build());
-    }*/
+    // Bundle discounts
+    public static final BundleDiscountEntity BUNDLE_A_B = BundleDiscountEntity.builder()
+        .id("1")
+        .fromItemId("A")
+        .toItemId("B")
+        .discountPrice(new BigDecimal("20.0"))
+        .validFrom(LocalDate.of(2024, 02, 15))
+        .build();
+
+    public static final BundleDiscountEntity BUNDLE_C_D = BundleDiscountEntity.builder()
+        .id("2")
+        .fromItemId("C")
+        .toItemId("D")
+        .discountPrice(new BigDecimal("10.0"))
+        .validFrom(LocalDate.of(2024, 01, 11))
+        .build();
 }

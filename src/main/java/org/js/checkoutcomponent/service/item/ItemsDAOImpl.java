@@ -20,11 +20,14 @@ public class ItemsDAOImpl implements ItemsDAO {
             .collect(Collectors.toMap(ItemEntity::getId, item -> item));
     }
 
-    @Override
-    public List<ItemDiscountEntity> getItemDiscounts(Set<String> itemIds) {
-        return getAllItemDiscounts().stream()
+    public Map<String, ItemDiscountEntity> getItemDiscounts(Set<String> itemIds) {
+        List<ItemDiscountEntity> allDiscounts = getAllItemDiscounts();
+        System.out.println("All discounts: " + allDiscounts);
+        System.out.println("Requested IDs: " + itemIds);
+
+        return allDiscounts.stream()
             .filter(e -> itemIds.contains(e.getItemId()))
-            .toList();
+            .collect(Collectors.toMap(ItemDiscountEntity::getItemId, discount -> discount));
     }
 
     @Override
@@ -41,19 +44,6 @@ public class ItemsDAOImpl implements ItemsDAO {
     }
 
     private List<BundleDiscountEntity> getAllBundleDiscounts() {
-        return List.of(BundleDiscountEntity.builder()
-                .id("1")
-                .fromItemId("A")
-                .toItemId("B")
-                .discountPrice(new BigDecimal("20.0"))
-                .validFrom(LocalDate.of(2024, 02, 15))
-                .build(),
-            BundleDiscountEntity.builder()
-                .id("2")
-                .fromItemId("C")
-                .toItemId("D")
-                .discountPrice(new BigDecimal("10.0"))
-                .validFrom(LocalDate.of(2024, 01, 11))
-                .build());
+        return List.of(ItemsMockedRepository.BUNDLE_A_B, ItemsMockedRepository.BUNDLE_C_D);
     }
 }

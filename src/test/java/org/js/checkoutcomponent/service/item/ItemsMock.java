@@ -1,5 +1,6 @@
 package org.js.checkoutcomponent.service.item;
 
+import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 
@@ -26,7 +27,13 @@ public class ItemsMock {
 
     public static final ItemDiscountEntity DISCOUNT_D = ItemsMockedRepository.DISCOUNT_D;
 
+    public static final BundleDiscountEntity BUNDLE_A_B = ItemsMockedRepository.BUNDLE_A_B;
+
+    public static final BundleDiscountEntity BUNDLE_C_D = ItemsMockedRepository.BUNDLE_C_D;
+
     public static final Map<String, ItemEntity> itemsMap = new HashMap<String, ItemEntity>();
+
+    public static final Map<String, ItemDiscountEntity> discountsMap = new HashMap<>();
 
     static {
         itemsMap.put("A", ITEM_A);
@@ -34,5 +41,9 @@ public class ItemsMock {
         itemsMap.put("C", ITEM_C);
         itemsMap.put("D", ITEM_D);
         itemsMap.put("E", ITEM_E);
+        discountsMap.put("A", DISCOUNT_A);
+        discountsMap.put("B", DISCOUNT_B);
+        discountsMap.put("C", DISCOUNT_C);
+        discountsMap.put("D", DISCOUNT_D);
     }
 }

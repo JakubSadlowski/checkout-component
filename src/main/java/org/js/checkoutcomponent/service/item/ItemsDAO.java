@@ -11,7 +11,7 @@ import java.util.Set;
 public interface ItemsDAO {
     Map<String, ItemEntity> getItems(Set<String> itemIds);
 
-    List<ItemDiscountEntity> getItemDiscounts(Set<String> itemIds);
+    Map<String, ItemDiscountEntity> getItemDiscounts(Set<String> itemIds);
 
     List<BundleDiscountEntity> getBundleDiscounts(Set<String> itemIds);
 }

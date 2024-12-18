@@ -61,7 +61,7 @@ class ItemsDAOImplTest {
     }
 
     @ParameterizedTest
-    @CsvSource({ "A, B, C", "C, D, A" })
+    @CsvSource({ "A, B", "C, D"})
     void getBundlesTest(String itemId1, String itemId2) {
         // Given
         Set<String> itemIds = Set.of(itemId1, itemId2);
@@ -72,11 +72,8 @@ class ItemsDAOImplTest {
         // Then
         assertEquals(1, bundleDiscounts.size());
         //TODO Still need to think how to test this
-        /*ItemDiscountEntity itemDiscountA = itemDiscounts.get(itemId1);
-        ItemDiscountEntity expectedDiscount1 = ItemsMock.discountsMap.get(itemId1);
-        assertEquals(expectedDiscount1, itemDiscountA);
-        ItemDiscountEntity itemDiscountB = itemDiscounts.get(itemId2);
-        ItemDiscountEntity expectedDiscount2 = ItemsMock.discountsMap.get(itemId2);
-        assertEquals(expectedDiscount2, itemDiscountB);*/
+        BundleDiscountEntity itemBundleDiscount1 = bundleDiscounts.get(itemId1);
+        BundleDiscountEntity expectedDiscount1 = ItemsMock.bundleDiscountsMap.get(itemId1);
+        assertEquals(expectedDiscount1, itemBundleDiscount1);
     }
 }

@@ -33,6 +33,7 @@ public class CheckoutService {
 
         response.setTotalPrice(result.totalPrice());
         response.setItemPrices(result.itemPrices());
+        response.setBundleDiscountApplied(result.bundleDiscount());
         return response;
     }
 
@@ -52,19 +53,19 @@ public class CheckoutService {
             Item item = mapDAOToItem(cartItem, itemsMap, discountsMap);
 
             BigDecimal itemTotal = calculateItemPrice(item, cartItem.getQuantity());
-            BigDecimal newTotalPrice = totalPrice.add(itemTotal);
+            totalPrice = totalPrice.add(itemTotal);
 
             ItemPrice itemPrice = new ItemPrice();
             itemPrice.setItemId(cartItem.getItemId());
             itemPrice.setQuantity(cartItem.getQuantity());
-            itemPrice.setPrice(newTotalPrice);
+            itemPrice.setPrice(itemTotal);
             itemPrices.add(itemPrice);
         }
 
         BigDecimal bundleDiscount = calculateBundleDiscounts(request, bundleDiscountsMap);
         totalPrice = totalPrice.subtract(bundleDiscount);
 
-        return new Result(itemPrices, totalPrice);
+        return new Result(itemPrices, totalPrice, bundleDiscount);
     }
 
     BigDecimal calculateBundleDiscounts(CheckoutRequest request, Map<String, BundleDiscountEntity> bundleDiscountsMap) {
@@ -106,6 +107,6 @@ public class CheckoutService {
             .add(normalPrice.multiply(BigDecimal.valueOf(remainingItems)));
     }
 
-    record Result(List<ItemPrice> itemPrices, BigDecimal totalPrice) {
+    record Result(List<ItemPrice> itemPrices, BigDecimal totalPrice, BigDecimal bundleDiscount) {
     }
 }

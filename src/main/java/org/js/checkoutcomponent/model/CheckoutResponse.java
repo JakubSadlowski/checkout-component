@@ -15,5 +15,5 @@ public class CheckoutResponse {
     @Schema(name = "itemPrices", description = "Detailed breakdown of prices per item")
     private List<ItemPrice> itemPrices;
     @Schema(name = "bundleDiscountApplied", example = "5.0", description = "Total bundle discounts applied")
-    private double bundleDiscountApplied;
+    private BigDecimal bundleDiscountApplied;
 }

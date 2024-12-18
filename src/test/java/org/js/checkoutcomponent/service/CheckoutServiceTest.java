@@ -34,10 +34,10 @@ class CheckoutServiceTest {
     @InjectMocks
     private CheckoutService checkoutService;
 
-    @BeforeEach
+   /* @BeforeEach
     void setUp() {
-        /*when(itemsDAO.getItems(Set.of("A", "B"))).thenReturn(Map.of("A", ItemsMock.ITEM_A, "B", ItemsMock.ITEM_B));*/
-    }
+        when(itemsDAO.getItems(Set.of("A", "B"))).thenReturn(Map.of("A", ItemsMock.ITEM_A, "B", ItemsMock.ITEM_B));
+    }*/
 
     @ParameterizedTest
     @CsvSource({ "20.5, 10.0, 2, 5, 60.5", "13.5, 2.0, 3, 4, 19.5" })

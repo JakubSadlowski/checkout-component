@@ -11,6 +11,6 @@ import java.util.List;
 public class CheckoutRequest {
     @NotNull
     @Valid
-    @Schema(name = "items", description = "List of items in the cart", required = true)
+    @Schema(name = "items", description = "List of items in the cart")
     private List<CartItem> items;
 }

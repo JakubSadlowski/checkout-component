@@ -52,7 +52,7 @@ class ItemsMockedRepository {
         .id("2")
         .itemId("B")
         .specialPrice(new BigDecimal("7.5"))
-        .quantity(3)
+        .quantity(2)
         .validFrom(LocalDate.of(2024, 05, 23))
         .build();
 
@@ -60,7 +60,7 @@ class ItemsMockedRepository {
         .id("3")
         .itemId("C")
         .specialPrice(new BigDecimal("20.0"))
-        .quantity(3)
+        .quantity(4)
         .validFrom(LocalDate.of(2024, 01, 10))
         .build();
 
@@ -68,7 +68,7 @@ class ItemsMockedRepository {
         .id("4")
         .itemId("D")
         .specialPrice(new BigDecimal("23.5"))
-        .quantity(3)
+        .quantity(2)
         .validFrom(LocalDate.of(2024, 02, 25))
         .build();
 

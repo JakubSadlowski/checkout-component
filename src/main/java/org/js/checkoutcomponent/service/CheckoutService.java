@@ -6,6 +6,7 @@ import org.js.checkoutcomponent.model.CheckoutResponse;
 import org.js.checkoutcomponent.model.ItemPrice;
 import org.js.checkoutcomponent.service.checkout.data.Item;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
+import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,10 +40,13 @@ public class CheckoutService {
 
         Set<String> itemIds = request.getItems().stream().map(e -> e.getItemId()).collect(Collectors.toSet());
         Map<String, ItemEntity> itemsMap = itemsDAO.getItems((itemIds));
+        Map<String, ItemDiscountEntity> discountsMap = itemsDAO.getItemDiscounts((itemIds));
 
         for (CartItem cartItem : request.getItems()) {
             //FIXME Need to add dataBase implementation
             ItemEntity item = itemsMap.get(cartItem.getItemId());
+            ItemDiscountEntity itemDiscount = discountsMap.get(cartItem.getItemId());
+
             if (item == null) {
                 throw new IllegalArgumentException("Invalid item ID: " + cartItem.getItemId());
             }

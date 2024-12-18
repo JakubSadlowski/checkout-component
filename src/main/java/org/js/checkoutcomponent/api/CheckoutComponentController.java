@@ -25,7 +25,7 @@ public class CheckoutComponentController {
     @Operation(
             operationId = "calculateTotal",
             summary = "Calculate total price for cart items",
-            description = "Calculates the total price considering bulk discounts and bundle offers"
+            description = "Calculates the total price considering special prices and bundle discounts"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful price calculation",

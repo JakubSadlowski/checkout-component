@@ -51,6 +51,8 @@ Below is an image from draw.io of the component checkout service.
 For now implemented only for session time and values are hard coded in demo database version. 
 Next steps for improvement are to better the Database design. 
 - Further improvements: Add Hibernate or MyBatis
+- Install Docker on AWS or Microsoft Azure
+- Set up container with chosen database image on Docker
 
 ---
 

@@ -5,6 +5,7 @@ import org.js.checkoutcomponent.model.CheckoutRequest;
 import org.js.checkoutcomponent.model.CheckoutResponse;
 import org.js.checkoutcomponent.model.ItemPrice;
 import org.js.checkoutcomponent.service.checkout.data.Item;
+import org.js.checkoutcomponent.service.checkout.mapper.ItemAndBundlesMapper;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
@@ -36,32 +37,32 @@ public class CheckoutService {
 
     Result calculateTotalPriceWithItemDiscounts(CheckoutRequest request) {
         List<ItemPrice> itemPrices = new ArrayList<>();
-        double totalPrice = 0;
+        BigDecimal totalPrice = BigDecimal.ZERO;
 
-        Set<String> itemIds = request.getItems().stream().map(e -> e.getItemId()).collect(Collectors.toSet());
+        Set<String> itemIds = request.getItems().stream().map(CartItem::getItemId).collect(Collectors.toSet());
         Map<String, ItemEntity> itemsMap = itemsDAO.getItems((itemIds));
         Map<String, ItemDiscountEntity> discountsMap = itemsDAO.getItemDiscounts((itemIds));
 
         for (CartItem cartItem : request.getItems()) {
-            //FIXME Need to add dataBase implementation
-            ItemEntity item = itemsMap.get(cartItem.getItemId());
-            ItemDiscountEntity itemDiscount = discountsMap.get(cartItem.getItemId());
+            Item item = mapDAOToItem(cartItem, itemsMap, discountsMap);
 
-            if (item == null) {
-                throw new IllegalArgumentException("Invalid item ID: " + cartItem.getItemId());
-            }
-
-            //BigDecimal itemTotal = calculateItemPrice(item, cartItem.getQuantity());
-            /*totalPrice += itemTotal;
+            BigDecimal itemTotal = calculateItemPrice(item, cartItem.getQuantity());
+            BigDecimal newTotalPrice = totalPrice.add(itemTotal);
 
             ItemPrice itemPrice = new ItemPrice();
             itemPrice.setItemId(cartItem.getItemId());
             itemPrice.setQuantity(cartItem.getQuantity());
-            itemPrice.setPrice(itemTotal);
-            itemPrices.add(itemPrice);*/
+            itemPrice.setPrice(newTotalPrice);
+            itemPrices.add(itemPrice);
         }
-        Result result = new Result(itemPrices, totalPrice);
-        return result;
+
+        return new Result(itemPrices, totalPrice);
+    }
+
+    static Item mapDAOToItem(CartItem cartItem, Map<String, ItemEntity> itemsMap, Map<String, ItemDiscountEntity> discountsMap) {
+        ItemEntity itemDAO = itemsMap.get(cartItem.getItemId());
+        ItemDiscountEntity itemDiscountDAO = discountsMap.get(cartItem.getItemId());
+        return ItemAndBundlesMapper.mapFromDao(itemDAO, itemDiscountDAO);
     }
 
     BigDecimal calculateItemPrice(Item item, int quantity) {
@@ -77,6 +78,6 @@ public class CheckoutService {
             .add(normalPrice.multiply(BigDecimal.valueOf(remainingItems)));
     }
 
-    record Result(List<ItemPrice> itemPrices, double totalPrice) {
+    record Result(List<ItemPrice> itemPrices, BigDecimal totalPrice) {
     }
 }

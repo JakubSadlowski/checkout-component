@@ -7,9 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.openapitools.model.CalculateTotal400Response;
-import org.openapitools.model.CheckoutRequest;
-import org.openapitools.model.CheckoutResponse;
+import org.js.checkoutcomponent.model.CheckoutRequest;
+import org.js.checkoutcomponent.model.CheckoutResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -26,15 +25,15 @@ public class CheckoutComponentController {
     @Operation(
             operationId = "calculateTotal",
             summary = "Calculate total price for cart items",
-            description = "Calculates the total price considering bulk discounts and bundle offers"
+            description = "Calculates the total price considering special prices and bundle discounts"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful price calculation",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CheckoutResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input",
+            /*@ApiResponse(responseCode = "400", description = "Invalid input",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CalculateTotal400Response.class)))
+                            schema = @Schema(implementation = CalculateTotal400Response.class)))*/
     })
     @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> calculateTotal(

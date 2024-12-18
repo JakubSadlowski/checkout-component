@@ -1,11 +1,16 @@
 openapi: 3.0.0
 info:
-  title: Checkout API
-  description: API for calculating shopping cart totals with special pricing rules
+  title: Checkout Component 3.0
+  description: API for calculating shopping cart totals with special pricing rules.
   version: "3.0"
+servers:
+  - url: https://localhost:8092
 
+tags:
+  - name: checkout
+    description: Checkout API
 paths:
-  /api/checkout:
+  /checkout:
     post:
       summary: Calculate total price for cart items
       description: Calculates the total price considering bulk discounts and bundle offers

@@ -4,7 +4,6 @@ import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

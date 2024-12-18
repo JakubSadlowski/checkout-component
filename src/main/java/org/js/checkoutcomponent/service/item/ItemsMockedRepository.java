@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 class ItemsMockedRepository {
+    private ItemsMockedRepository() {
+    }
+
     // Items
     public static final ItemEntity ITEM_A = ItemEntity.builder()
         .id("A")

@@ -11,7 +11,6 @@ import org.js.checkoutcomponent.model.CheckoutRequest;
 import org.js.checkoutcomponent.model.CheckoutResponse;
 import org.js.checkoutcomponent.service.CheckoutService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +25,9 @@ import javax.validation.Valid;
 @Validated
 @Tag(name = "checkout", description = "Checkout API")
 public class CheckoutComponentController {
-    final CheckoutService checkoutService;
+    private final CheckoutService checkoutService;
 
+    @Autowired
     public CheckoutComponentController(CheckoutService checkoutService) {
         this.checkoutService = checkoutService;
     }

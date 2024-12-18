@@ -1,6 +1,6 @@
 package org.js.checkoutcomponent.service.item;
 
-import org.js.checkoutcomponent.config.DAOConfig;
+import org.js.checkoutcomponent.config.CheckoutConfig;
 import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
@@ -16,7 +16,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@ContextConfiguration(classes = { DAOConfig.class })
+@ContextConfiguration(classes = { CheckoutConfig.class })
 class ItemsDAOImplTest {
     @Autowired
     ItemsDAO dao;
@@ -61,8 +61,8 @@ class ItemsDAOImplTest {
     }
 
     @ParameterizedTest
-    @CsvSource({ "A, B", "C, D"})
-    void getBundlesTest(String itemId1, String itemId2) {
+    @CsvSource({ "A, B, 1", "C, D, 1", "A, C, 0", "B, D, 0" })
+    void getBundlesTest(String itemId1, String itemId2, int expectedDiscountsCount) {
         // Given
         Set<String> itemIds = Set.of(itemId1, itemId2);
 
@@ -70,10 +70,6 @@ class ItemsDAOImplTest {
         Map<String, BundleDiscountEntity> bundleDiscounts = dao.getBundleDiscounts(itemIds);
 
         // Then
-        assertEquals(1, bundleDiscounts.size());
-        //TODO Still need to think how to test this
-        BundleDiscountEntity itemBundleDiscount1 = bundleDiscounts.get(itemId1);
-        BundleDiscountEntity expectedDiscount1 = ItemsMock.bundleDiscountsMap.get(itemId1);
-        assertEquals(expectedDiscount1, itemBundleDiscount1);
+        assertEquals(expectedDiscountsCount, bundleDiscounts.size());
     }
 }

@@ -28,7 +28,7 @@ public class ItemsDAOImpl implements ItemsDAO {
     @Override
     public Map<String, BundleDiscountEntity> getBundleDiscounts(Set<String> itemIds) {
         return getAllBundleDiscounts().stream()
-            .filter(e -> itemIds.contains(e.getFromItemId()) || itemIds.contains(e.getToItemId()))
+            .filter(e -> itemIds.contains(e.getFromItemId()) && itemIds.contains(e.getToItemId()))
             .collect(Collectors.toMap(BundleDiscountEntity::getId, bundle -> bundle));
     }
 

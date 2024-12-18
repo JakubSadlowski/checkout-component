@@ -1,10 +1,8 @@
 package org.js.checkoutcomponent.service;
 
-import org.apache.coyote.Request;
 import org.js.checkoutcomponent.config.DAOConfig;
 import org.js.checkoutcomponent.model.CartItem;
 import org.js.checkoutcomponent.model.CheckoutRequest;
-import org.js.checkoutcomponent.service.checkout.data.Item;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
 import org.js.checkoutcomponent.service.item.ItemsMock;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +14,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -25,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -38,20 +34,13 @@ class CheckoutServiceTest {
     @InjectMocks
     private CheckoutService checkoutService;
 
-
     @BeforeEach
     void setUp() {
-        when(itemsDAO.getItems(Set.of("A", "B"))).thenReturn(Map.of(
-            "A", ItemsMock.ITEM_A,
-            "B", ItemsMock.ITEM_B
-        ));
+        /*when(itemsDAO.getItems(Set.of("A", "B"))).thenReturn(Map.of("A", ItemsMock.ITEM_A, "B", ItemsMock.ITEM_B));*/
     }
 
     @ParameterizedTest
-    @CsvSource({
-        "20.5, 10.0, 2, 5, 60.5",
-        "13.5, 2.0, 3, 4, 19.5"
-    })
+    @CsvSource({ "20.5, 10.0, 2, 5, 60.5", "13.5, 2.0, 3, 4, 19.5" })
     void calculateItemPriceTest(String normalPrice, String specialPrice, String requiredQuantity, String quantity, String expectedTotalPrice) {
         // Given
         BigDecimal normalPriceConverted = new BigDecimal(normalPrice);
@@ -68,17 +57,43 @@ class CheckoutServiceTest {
     }
 
     @Test
-    void totalPriceTest() {
+    void calculateBundleDiscountsTest() {
         // Given
-        when(itemsDAO.getItems(Set.of("A", "B"))).thenReturn(Map.of(
-            "A", ItemsMock.ITEM_A,
-            "B", ItemsMock.ITEM_B
-        ));
         CheckoutRequest request = new CheckoutRequest();
-        request.setItems(List.of(CartItem.builder().itemId("A").quantity(5).build(), CartItem.builder().itemId("B").quantity(6).build()));
+        List<CartItem> items = List.of(CartItem.builder()
+                .itemId("A")
+                .quantity(5)
+                .build(),
+            CartItem.builder()
+                .itemId("B")
+                .quantity(2)
+                .build());
+        request.setItems(items);
 
         // When
-        CheckoutService.Result result = checkoutService.calculateTotalPriceWithItemDiscounts(request);
+        BigDecimal totalDiscount = checkoutService.calculateBundleDiscounts(request, ItemsMock.bundleDiscountsMap);
+
+        // Then
+        BigDecimal expectedDiscount = new BigDecimal("40.0");
+        Assertions.assertEquals(expectedDiscount, totalDiscount);
+    }
+
+    @Test
+    void totalPriceTest() {
+        // Given
+        when(itemsDAO.getItems(Set.of("A", "B"))).thenReturn(Map.of("A", ItemsMock.ITEM_A, "B", ItemsMock.ITEM_B));
+        CheckoutRequest request = new CheckoutRequest();
+        request.setItems(List.of(CartItem.builder()
+                .itemId("A")
+                .quantity(5)
+                .build(),
+            CartItem.builder()
+                .itemId("B")
+                .quantity(6)
+                .build()));
+
+        // When
+        CheckoutService.Result result = checkoutService.calculateTotalPriceWithItemDiscountsAndBundles(request);
 
         // Then
         Assertions.assertEquals(0, 0);

@@ -7,6 +7,7 @@ import org.js.checkoutcomponent.model.ItemPrice;
 import org.js.checkoutcomponent.service.checkout.data.Item;
 import org.js.checkoutcomponent.service.checkout.mapper.ItemAndBundlesMapper;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
+import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class CheckoutService {
 
     public CheckoutResponse calculateTotalPrice(CheckoutRequest request) {
 
-        Result result = calculateTotalPriceWithItemDiscounts(request);
+        Result result = calculateTotalPriceWithItemDiscountsAndBundles(request);
 
         CheckoutResponse response = new CheckoutResponse();
 
@@ -35,13 +36,17 @@ public class CheckoutService {
         return response;
     }
 
-    Result calculateTotalPriceWithItemDiscounts(CheckoutRequest request) {
+    Result calculateTotalPriceWithItemDiscountsAndBundles(CheckoutRequest request) {
         List<ItemPrice> itemPrices = new ArrayList<>();
         BigDecimal totalPrice = BigDecimal.ZERO;
 
-        Set<String> itemIds = request.getItems().stream().map(CartItem::getItemId).collect(Collectors.toSet());
+        Set<String> itemIds = request.getItems()
+            .stream()
+            .map(CartItem::getItemId)
+            .collect(Collectors.toSet());
         Map<String, ItemEntity> itemsMap = itemsDAO.getItems((itemIds));
         Map<String, ItemDiscountEntity> discountsMap = itemsDAO.getItemDiscounts((itemIds));
+        Map<String, BundleDiscountEntity> bundleDiscountsMap = itemsDAO.getBundleDiscounts((itemIds));
 
         for (CartItem cartItem : request.getItems()) {
             Item item = mapDAOToItem(cartItem, itemsMap, discountsMap);
@@ -56,7 +61,30 @@ public class CheckoutService {
             itemPrices.add(itemPrice);
         }
 
+        BigDecimal bundleDiscount = calculateBundleDiscounts(request, bundleDiscountsMap);
+        totalPrice = totalPrice.subtract(bundleDiscount);
+
         return new Result(itemPrices, totalPrice);
+    }
+
+    BigDecimal calculateBundleDiscounts(CheckoutRequest request, Map<String, BundleDiscountEntity> bundleDiscountsMap) {
+        BigDecimal totalDiscount = BigDecimal.ZERO;
+        Map<String, Integer> itemQuantities = request.getItems()
+            .stream()
+            .collect(Collectors.toMap(CartItem::getItemId, CartItem::getQuantity));
+
+        for (BundleDiscountEntity discount : bundleDiscountsMap.values()) {
+            Integer firstItemQuantity = itemQuantities.get(discount.getFromItemId());
+            Integer secondItemQuantity = itemQuantities.get(discount.getToItemId());
+
+            if (firstItemQuantity != null && secondItemQuantity != null && firstItemQuantity > 0 && secondItemQuantity > 0) {
+                int pairs = Math.min(firstItemQuantity, secondItemQuantity);
+                totalDiscount = totalDiscount.add(discount.getDiscountPrice()
+                    .multiply(BigDecimal.valueOf(pairs)));
+            }
+        }
+
+        return totalDiscount;
     }
 
     static Item mapDAOToItem(CartItem cartItem, Map<String, ItemEntity> itemsMap, Map<String, ItemDiscountEntity> discountsMap) {

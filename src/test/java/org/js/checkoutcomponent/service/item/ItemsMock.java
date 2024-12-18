@@ -35,6 +35,8 @@ public class ItemsMock {
 
     public static final Map<String, ItemDiscountEntity> discountsMap = new HashMap<>();
 
+    public static final Map<String, BundleDiscountEntity> bundleDiscountsMap = new HashMap<>();
+
     static {
         itemsMap.put("A", ITEM_A);
         itemsMap.put("B", ITEM_B);
@@ -45,5 +47,7 @@ public class ItemsMock {
         discountsMap.put("B", DISCOUNT_B);
         discountsMap.put("C", DISCOUNT_C);
         discountsMap.put("D", DISCOUNT_D);
+        bundleDiscountsMap.put(BUNDLE_A_B.getId(), BUNDLE_A_B);
+        bundleDiscountsMap.put(BUNDLE_C_D.getId(), BUNDLE_C_D);
     }
 }

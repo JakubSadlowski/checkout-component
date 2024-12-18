@@ -1,6 +1,7 @@
 package org.js.checkoutcomponent.service.item;
 
 import org.js.checkoutcomponent.config.DAOConfig;
+import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,4 +60,23 @@ class ItemsDAOImplTest {
         assertEquals(expectedDiscount2, itemDiscountB);
     }
 
+    @ParameterizedTest
+    @CsvSource({ "A, B, C", "C, D, A" })
+    void getBundlesTest(String itemId1, String itemId2) {
+        // Given
+        Set<String> itemIds = Set.of(itemId1, itemId2);
+
+        // When
+        Map<String, BundleDiscountEntity> bundleDiscounts = dao.getBundleDiscounts(itemIds);
+
+        // Then
+        assertEquals(1, bundleDiscounts.size());
+        //TODO Still need to think how to test this
+        /*ItemDiscountEntity itemDiscountA = itemDiscounts.get(itemId1);
+        ItemDiscountEntity expectedDiscount1 = ItemsMock.discountsMap.get(itemId1);
+        assertEquals(expectedDiscount1, itemDiscountA);
+        ItemDiscountEntity itemDiscountB = itemDiscounts.get(itemId2);
+        ItemDiscountEntity expectedDiscount2 = ItemsMock.discountsMap.get(itemId2);
+        assertEquals(expectedDiscount2, itemDiscountB);*/
+    }
 }

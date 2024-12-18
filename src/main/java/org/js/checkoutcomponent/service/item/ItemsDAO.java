@@ -13,5 +13,5 @@ public interface ItemsDAO {
 
     Map<String, ItemDiscountEntity> getItemDiscounts(Set<String> itemIds);
 
-    List<BundleDiscountEntity> getBundleDiscounts(Set<String> itemIds);
+    Map<String, BundleDiscountEntity> getBundleDiscounts(Set<String> itemIds);
 }

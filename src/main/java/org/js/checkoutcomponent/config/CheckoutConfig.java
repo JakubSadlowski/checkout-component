@@ -11,10 +11,6 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import javax.sql.DataSource;
 
 @Configuration
 @MapperScan("org.js.checkoutcomponent.service.item.mapper")
@@ -48,9 +44,5 @@ public class CheckoutConfig {
             .addScript("classpath:/database/schema.sql")
             .addScript("classpath:/database/data.sql")
             .build();
-    }
-
-    public GlobalExceptionHandler getGlobalExceptionHandler() {
-        return new GlobalExceptionHandler();
     }
 }

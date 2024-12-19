@@ -1,7 +1,6 @@
 package org.js.checkoutcomponent.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.js.checkoutcomponent.errors.GlobalExceptionHandler;
 import org.js.checkoutcomponent.service.CheckoutService;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
 import org.js.checkoutcomponent.service.item.ItemsDAOImpl;
@@ -11,6 +10,10 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import javax.sql.DataSource;
 
 @Configuration
 @MapperScan("org.js.checkoutcomponent.service.item.mapper")

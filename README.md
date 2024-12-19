@@ -14,7 +14,7 @@ Checkout REST service calculating total price of the items in a cart.
     - some items are multi-priced: buy N of them, and they’ll cost you Y cents
 
       | Item | Normal Price | Required Quantity | Special Price |
-                  |------|--------------|-------------------|---------------|
+      |------|--------------|-------------------|---------------|
       | A    | 40           | 3                 | 30            |
       | B    | 10           | 2                 | 7.5           |
       | C    | 30           | 4                 | 20            |

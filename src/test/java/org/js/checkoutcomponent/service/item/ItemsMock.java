@@ -47,7 +47,7 @@ public class ItemsMock {
         .itemId("A")
         .specialPrice(new BigDecimal("30.0"))
         .quantity(3)
-        .validFrom(LocalDate.of(2024, 01, 21))
+        .validFrom(LocalDate.of(2024, 1, 21))
         .build();
 
     public static final ItemDiscountEntity DISCOUNT_B = ItemDiscountEntity.builder()
@@ -55,7 +55,7 @@ public class ItemsMock {
         .itemId("B")
         .specialPrice(new BigDecimal("7.5"))
         .quantity(2)
-        .validFrom(LocalDate.of(2024, 05, 23))
+        .validFrom(LocalDate.of(2024, 5, 23))
         .build();
 
     public static final ItemDiscountEntity DISCOUNT_C = ItemDiscountEntity.builder()
@@ -63,7 +63,7 @@ public class ItemsMock {
         .itemId("C")
         .specialPrice(new BigDecimal("20.0"))
         .quantity(4)
-        .validFrom(LocalDate.of(2024, 01, 10))
+        .validFrom(LocalDate.of(2024, 1, 10))
         .build();
 
     public static final ItemDiscountEntity DISCOUNT_D = ItemDiscountEntity.builder()
@@ -71,7 +71,7 @@ public class ItemsMock {
         .itemId("D")
         .specialPrice(new BigDecimal("23.5"))
         .quantity(2)
-        .validFrom(LocalDate.of(2024, 02, 25))
+        .validFrom(LocalDate.of(2024, 2, 25))
         .build();
 
     // Bundle discounts
@@ -80,7 +80,7 @@ public class ItemsMock {
         .fromItemId("A")
         .toItemId("B")
         .discountPrice(new BigDecimal("20.0"))
-        .validFrom(LocalDate.of(2024, 02, 15))
+        .validFrom(LocalDate.of(2024, 2, 15))
         .build();
 
     public static final BundleDiscountEntity BUNDLE_C_D = BundleDiscountEntity.builder()
@@ -88,7 +88,7 @@ public class ItemsMock {
         .fromItemId("C")
         .toItemId("D")
         .discountPrice(new BigDecimal("10.0"))
-        .validFrom(LocalDate.of(2024, 01, 11))
+        .validFrom(LocalDate.of(2024, 1, 11))
         .build();
 
     public static final Map<String, ItemEntity> itemsMap = Map.of("A", ITEM_A, "B", ITEM_B, "C", ITEM_C, "D", ITEM_D, "E", ITEM_E);

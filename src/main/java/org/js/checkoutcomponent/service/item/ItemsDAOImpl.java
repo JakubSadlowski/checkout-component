@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @CommonsLog
 public class ItemsDAOImpl implements ItemsDAO {
-    private ItemsMapper itemsMapper;
+    private final ItemsMapper itemsMapper;
 
     @Autowired
     public ItemsDAOImpl(ItemsMapper itemsMapper) {

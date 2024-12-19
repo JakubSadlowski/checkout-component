@@ -18,19 +18,19 @@ Checkout REST Service implemented using Java and Spring for calculating total pr
 
 ### Build and Run
 ```bash
-  mvn clean install
+mvn clean install
 ```
 
 ### To build JAR
 ```bash
-  mvn clean package
+mvn clean package
 ```
 The JAR file will be created in target folder.
 
 ### Run the application using the generated JAR
 Open command line and go to project folder and run this command
 ```bash
-  java -jar target/checkout-component-3.0.1-SNAPSHOT.jar
+java -jar target/checkout-component-3.0.1-SNAPSHOT.jar
 ```
 
 ---

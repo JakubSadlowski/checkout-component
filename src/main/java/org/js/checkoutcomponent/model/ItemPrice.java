@@ -16,5 +16,7 @@ public class ItemPrice {
     @NotNull
     @Schema(name = "quantity", example = "3", description = "Number of items")
     private int quantity;
+    @NotNull
+    @Schema(name = "price", example = "90.0", description = "Price of all the items combined with given identifier")
     private BigDecimal price;
 }

@@ -142,34 +142,11 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>openapi-generate</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.openapitools</groupId>
-                        <artifactId>openapi-generator-maven-plugin</artifactId>
-                        <version>6.6.0</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>generate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/checkout-component-open-api.yaml</inputSpec>
-                            <output>${project.basedir}/target/generated-sources/openapi</output>
-                            <generatorName>java</generatorName>
-                            <apiPackage>com.example.api</apiPackage>
-                            <modelPackage>com.example.model</modelPackage>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

@@ -110,6 +110,9 @@ public class CheckoutService {
     }
 
     BigDecimal calculateItemPrice(Item item, int quantity) {
+        if (item.getRequiredQuantity() == 0 || item.getSpecialPrice() == null) {
+            return calculateItemPriceWithoutDiscount(item.getNormalPrice(), quantity);
+        }
         return calculateItemPrice(item.getNormalPrice(), item.getSpecialPrice(), item.getRequiredQuantity(), quantity);
     }
 
@@ -120,6 +123,10 @@ public class CheckoutService {
         return specialPrice.multiply(BigDecimal.valueOf(requiredQuantity))
             .multiply(BigDecimal.valueOf(specialPriceGroups))
             .add(normalPrice.multiply(BigDecimal.valueOf(remainingItems)));
+    }
+
+    BigDecimal calculateItemPriceWithoutDiscount(BigDecimal normalPrice, int quantity) {
+        return normalPrice.multiply(BigDecimal.valueOf(quantity));
     }
 
     BigDecimal calculateBundleDiscounts(CheckoutRequest request, Map<String, BundleDiscountEntity> bundleDiscountsMap) {

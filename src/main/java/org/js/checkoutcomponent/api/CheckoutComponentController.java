@@ -41,9 +41,7 @@ public class CheckoutComponentController {
     @Operation(operationId = "calculateTotal", summary = "Calculate total price for cart items", description = "Calculates the total price considering special prices and bundle discounts")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successful price calculation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CheckoutResponse.class))),
-            /*@ApiResponse(responseCode = "400", description = "Invalid input",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CalculateTotal400Response.class)))*/ })
+        @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CheckoutResponse.class))) })
     @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> calculateTotal(@Parameter(description = "Checkout request with items", required = true) @Valid @RequestBody CheckoutRequest checkoutRequest) {
         if (hasRequestDuplicatedItems(checkoutRequest)) {

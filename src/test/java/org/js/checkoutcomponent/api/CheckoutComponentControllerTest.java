@@ -93,20 +93,10 @@ class CheckoutComponentControllerTest {
                 .build()));
 
         // When
-        //ResponseEntity<CheckoutResponse> response = controller.calculateTotal(request);
         ResponseEntity<Map> response = restTemplate.postForEntity("/api/checkout", request, Map.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-
-        /*@SuppressWarnings("unchecked")
-        Map<String, Object> body = response.getBody();
-        assertThat(body).isNotNull();
-        assertThat(body.containsKey("message")).isTrue();
-        assertThat(body.containsKey("timestamp")).isTrue();
-        assertThat(body.get("message")).isEqualTo("Some cart items are duplicated");*/
-        /*assertThat(response).isNotNull();
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);*/
     }
 
     @Test

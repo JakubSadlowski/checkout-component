@@ -20,18 +20,7 @@ import java.util.Map;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * TODO: Implement such tests
- * 1) Request with empty list of cart items => HttpStatus.OK
- * 2) Request with at least two CartItems in the list having the same ID => HttpStatus.BAD_REQUEST - DONE
- * 3) Request with at least one CartItem having quantity =0 => HttpStatus.BAD_REQUEST
- * 4) Request with at least one CartItem having quantity <0 => HttpStatus.BAD_REQUEST
- * 5) Request with some cart Items which are valid => HttpStatus.OK - DONE
- */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-/*@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-    properties = {"server.port=8092"})*/
-//@ContextConfiguration(classes = { CheckoutConfig.class, CheckoutComponentController.class })
 @ComponentScan(basePackages = { "org.js.checkoutcomponent.errors" })
 class CheckoutComponentControllerTest {
     @Autowired

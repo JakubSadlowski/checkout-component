@@ -1,6 +1,9 @@
 package org.js.checkoutcomponent.config;
 
+import org.js.checkoutcomponent.errors.GlobalExceptionHandler;
 import org.js.checkoutcomponent.service.CheckoutService;
+import org.js.checkoutcomponent.service.item.ItemsDAO;
+import org.js.checkoutcomponent.service.item.ItemsDAOImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,6 +11,15 @@ import org.springframework.context.annotation.Configuration;
 public class CheckoutConfig {
     @Bean
     public CheckoutService getCheckoutService() {
-        return new CheckoutService();
+        return new CheckoutService(getItemsDAO());
+    }
+
+    @Bean
+    public ItemsDAO getItemsDAO() {
+        return new ItemsDAOImpl();
+    }
+
+    public GlobalExceptionHandler getGlobalExceptionHandler() {
+        return new GlobalExceptionHandler();
     }
 }

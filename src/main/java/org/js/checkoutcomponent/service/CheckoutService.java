@@ -1,68 +1,112 @@
 package org.js.checkoutcomponent.service;
 
+import lombok.extern.apachecommons.CommonsLog;
+import org.js.checkoutcomponent.errors.CartItemNotFoundException;
 import org.js.checkoutcomponent.model.CartItem;
 import org.js.checkoutcomponent.model.CheckoutRequest;
 import org.js.checkoutcomponent.model.CheckoutResponse;
 import org.js.checkoutcomponent.model.ItemPrice;
 import org.js.checkoutcomponent.service.checkout.data.Item;
-import org.js.checkoutcomponent.service.checkout.mapper.ItemAndBundlesMapper;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
+import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
+@CommonsLog
 public class CheckoutService {
-    @Autowired
     private ItemsDAO itemsDAO;
 
+    @Autowired
+    public CheckoutService(ItemsDAO itemsDAO) {
+        this.itemsDAO = itemsDAO;
+    }
+
     public CheckoutResponse calculateTotalPrice(CheckoutRequest request) {
+        log.info("Checkout component 3.0 request: " + request);
+        Result result = calculateTotalPriceWithItemDiscountsAndBundles(request);
 
-        Result result = calculateTotalPriceWithItemDiscounts(request);
+        CheckoutResponse response = CheckoutResponse.builder()
+            .totalPrice(result.totalPrice())
+            .itemPrices(result.itemPrices())
+            .bundleDiscountApplied(result.bundleDiscount())
+            .build();
 
-        CheckoutResponse response = new CheckoutResponse();
+        log.info("Response: " + response);
 
-        response.setTotalPrice(result.totalPrice());
-        response.setItemPrices(result.itemPrices());
         return response;
     }
 
-    Result calculateTotalPriceWithItemDiscounts(CheckoutRequest request) {
-        List<ItemPrice> itemPrices = new ArrayList<>();
-        BigDecimal totalPrice = BigDecimal.ZERO;
+    Result calculateTotalPriceWithItemDiscountsAndBundles(CheckoutRequest request) {
+        Set<String> itemIds = getRequestItemsIds(request);
 
-        Set<String> itemIds = request.getItems().stream().map(CartItem::getItemId).collect(Collectors.toSet());
-        Map<String, ItemEntity> itemsMap = itemsDAO.getItems((itemIds));
-        Map<String, ItemDiscountEntity> discountsMap = itemsDAO.getItemDiscounts((itemIds));
+        List<ItemPrice> itemPrices = calculateItemsPricesWithDiscounts(request.getItems(), itemIds);
+        BigDecimal totalPrice = calculateTotalPriceForItemsPricesWithDiscounts(itemPrices);
+        BigDecimal totalBundleDiscount = calculateBundleDiscounts(request, itemsDAO.getBundleDiscounts(itemIds));
 
-        for (CartItem cartItem : request.getItems()) {
-            Item item = mapDAOToItem(cartItem, itemsMap, discountsMap);
+        totalPrice = totalPrice.subtract(totalBundleDiscount);
 
-            BigDecimal itemTotal = calculateItemPrice(item, cartItem.getQuantity());
-            BigDecimal newTotalPrice = totalPrice.add(itemTotal);
-
-            ItemPrice itemPrice = new ItemPrice();
-            itemPrice.setItemId(cartItem.getItemId());
-            itemPrice.setQuantity(cartItem.getQuantity());
-            itemPrice.setPrice(newTotalPrice);
-            itemPrices.add(itemPrice);
-        }
-
-        return new Result(itemPrices, totalPrice);
+        return new Result(itemPrices, totalPrice, totalBundleDiscount);
     }
 
-    static Item mapDAOToItem(CartItem cartItem, Map<String, ItemEntity> itemsMap, Map<String, ItemDiscountEntity> discountsMap) {
-        ItemEntity itemDAO = itemsMap.get(cartItem.getItemId());
-        ItemDiscountEntity itemDiscountDAO = discountsMap.get(cartItem.getItemId());
-        return ItemAndBundlesMapper.mapFromDao(itemDAO, itemDiscountDAO);
+    private List<ItemPrice> calculateItemsPricesWithDiscounts(List<CartItem> cartItems, Set<String> itemIds) {
+        List<ItemPrice> itemPrices = new ArrayList<>();
+
+        Map<String, Item> itemWithDiscounts = getItemsWithDiscounts(itemIds);
+
+        for (CartItem cartItem : cartItems) {
+            Item itemIncludingDiscount = itemWithDiscounts.get(cartItem.getItemId());
+
+            BigDecimal calculatedPrice = calculateItemPrice(itemIncludingDiscount, cartItem.getQuantity());
+
+            itemPrices.add(ItemPrice.builder()
+                .itemId(cartItem.getItemId())
+                .quantity(cartItem.getQuantity())
+                .price(calculatedPrice)
+                .build());
+        }
+
+        log.info("Fetched items with discounts: " + Arrays.toString(itemPrices.toArray()));
+
+        return itemPrices;
+    }
+
+    private Map<String, Item> getItemsWithDiscounts(Set<String> itemIds) {
+        Map<String, Item> itemsWithDiscounts = new HashMap<>();
+        Map<String, ItemEntity> items = itemsDAO.getItems(itemIds);
+        validateIfAllInputItemsFoundInDatabase(itemIds, items.keySet());
+
+        Map<String, ItemDiscountEntity> itemDiscounts = itemsDAO.getItemDiscounts(itemIds);
+        for (Map.Entry<String, ItemEntity> entry : items.entrySet()) {
+            ItemEntity itemEntity = entry.getValue();
+            ItemDiscountEntity discount = itemDiscounts.get(itemEntity.getId());
+            Item itemWithDiscount = Item.builder()
+                .id(itemEntity.getId())
+                .normalPrice(itemEntity.getNormalPrice())
+                .specialPrice(discount != null ? discount.getSpecialPrice() : null)
+                .requiredQuantity(discount != null ? discount.getQuantity() : 0)
+                .build();
+
+            itemsWithDiscounts.put(entry.getKey(), itemWithDiscount);
+        }
+        return itemsWithDiscounts;
+    }
+
+    private void validateIfAllInputItemsFoundInDatabase(Set<String> itemIds, Set<String> fetchedItemIds) {
+        for (String itemId : itemIds) {
+            if (!fetchedItemIds.contains(itemId)) {
+                throw new CartItemNotFoundException(String.format("Cart item %s not found in database.", itemId));
+            }
+        }
     }
 
     BigDecimal calculateItemPrice(Item item, int quantity) {
@@ -78,6 +122,50 @@ public class CheckoutService {
             .add(normalPrice.multiply(BigDecimal.valueOf(remainingItems)));
     }
 
-    record Result(List<ItemPrice> itemPrices, BigDecimal totalPrice) {
+    BigDecimal calculateBundleDiscounts(CheckoutRequest request, Map<String, BundleDiscountEntity> bundleDiscountsMap) {
+        BigDecimal totalDiscount = BigDecimal.ZERO;
+        Map<String, Integer> itemQuantities = getItemsQuantities(request);
+
+        for (BundleDiscountEntity discount : bundleDiscountsMap.values()) {
+            totalDiscount = totalDiscount.add(calculateSingleBundleDiscount(discount, itemQuantities));
+        }
+
+        return totalDiscount;
+    }
+
+    private static BigDecimal calculateSingleBundleDiscount(BundleDiscountEntity discount, Map<String, Integer> itemQuantities) {
+        int firstItemQuantity = itemQuantities.getOrDefault(discount.getFromItemId(), 0);
+        int secondItemQuantity = itemQuantities.getOrDefault(discount.getToItemId(), 0);
+        if (firstItemQuantity == 0 || secondItemQuantity == 0) {
+            return BigDecimal.ZERO;
+        }
+
+        int pairs = Math.min(firstItemQuantity, secondItemQuantity);
+        return discount.getDiscountPrice()
+            .multiply(BigDecimal.valueOf(pairs));
+    }
+
+    private static Map<String, Integer> getItemsQuantities(CheckoutRequest request) {
+        return request.getItems()
+            .stream()
+            .collect(Collectors.toMap(CartItem::getItemId, CartItem::getQuantity));
+    }
+
+    private BigDecimal calculateTotalPriceForItemsPricesWithDiscounts(List<ItemPrice> itemPrices) {
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (ItemPrice itemPrice : itemPrices) {
+            totalPrice = totalPrice.add(itemPrice.getPrice());
+        }
+        return totalPrice;
+    }
+
+    private static Set<String> getRequestItemsIds(CheckoutRequest request) {
+        return request.getItems()
+            .stream()
+            .map(CartItem::getItemId)
+            .collect(Collectors.toSet());
+    }
+
+    record Result(List<ItemPrice> itemPrices, BigDecimal totalPrice, BigDecimal bundleDiscount) {
     }
 }

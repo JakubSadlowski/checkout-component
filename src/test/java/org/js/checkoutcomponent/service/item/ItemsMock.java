@@ -4,7 +4,6 @@ import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ItemsMock {
@@ -31,23 +30,10 @@ public class ItemsMock {
 
     public static final BundleDiscountEntity BUNDLE_C_D = ItemsMockedRepository.BUNDLE_C_D;
 
-    public static final Map<String, ItemEntity> itemsMap = new HashMap<String, ItemEntity>();
+    public static final Map<String, ItemEntity> itemsMap = Map.of("A", ITEM_A, "B", ITEM_B, "C", ITEM_C, "D", ITEM_D, "E", ITEM_E);
 
-    public static final Map<String, ItemDiscountEntity> discountsMap = new HashMap<>();
+    public static final Map<String, ItemDiscountEntity> discountsMap = Map.of("A", DISCOUNT_A, "B", DISCOUNT_B, "C", DISCOUNT_C, "D", DISCOUNT_D);
 
-    public static final Map<String, BundleDiscountEntity> bundleDiscountsMap = new HashMap<>();
+    public static final Map<String, BundleDiscountEntity> bundleDiscountsMap = Map.of(BUNDLE_A_B.getId(), BUNDLE_A_B, BUNDLE_C_D.getId(), BUNDLE_C_D);
 
-    static {
-        itemsMap.put("A", ITEM_A);
-        itemsMap.put("B", ITEM_B);
-        itemsMap.put("C", ITEM_C);
-        itemsMap.put("D", ITEM_D);
-        itemsMap.put("E", ITEM_E);
-        discountsMap.put("A", DISCOUNT_A);
-        discountsMap.put("B", DISCOUNT_B);
-        discountsMap.put("C", DISCOUNT_C);
-        discountsMap.put("D", DISCOUNT_D);
-        bundleDiscountsMap.put(BUNDLE_A_B.getId(), BUNDLE_A_B);
-        bundleDiscountsMap.put(BUNDLE_C_D.getId(), BUNDLE_C_D);
-    }
 }

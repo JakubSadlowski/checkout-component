@@ -15,6 +15,8 @@ import org.js.checkoutcomponent.errors.ServiceGeneralException;
 import org.js.checkoutcomponent.model.CartItem;
 import org.js.checkoutcomponent.model.CheckoutRequest;
 import org.js.checkoutcomponent.model.CheckoutResponse;
+import org.js.checkoutcomponent.model.FailureCartItemNotFoundResponse;
+import org.js.checkoutcomponent.model.FailureResponse;
 import org.js.checkoutcomponent.service.CheckoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +46,9 @@ public class CheckoutComponentController {
     @Operation(operationId = "calculateTotal", summary = "Calculate total price for cart items", description = "Calculates the total price considering special prices and bundle discounts")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successful price calculation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CheckoutResponse.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CheckoutResponse.class))) })
+        @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FailureResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Cart item not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FailureCartItemNotFoundResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FailureResponse.class))) })
     @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> calculateTotal(@Parameter(description = "Checkout request with items", required = true) @Valid @RequestBody CheckoutRequest checkoutRequest) {
         calculateTotalInputValidation(checkoutRequest);

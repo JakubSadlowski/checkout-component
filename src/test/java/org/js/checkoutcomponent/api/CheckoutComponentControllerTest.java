@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * 5) Request with some cart Items which are valid => HttpStatus.OK - DONE
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+/*@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+    properties = {"server.port=8092"})*/
 //@ContextConfiguration(classes = { CheckoutConfig.class, CheckoutComponentController.class })
 @ComponentScan(basePackages = { "org.js.checkoutcomponent.errors" })
 class CheckoutComponentControllerTest {
@@ -93,11 +95,7 @@ class CheckoutComponentControllerTest {
 
         // When
         //ResponseEntity<CheckoutResponse> response = controller.calculateTotal(request);
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-            "/api/checkout",
-            request,
-            Map.class
-        );
+        ResponseEntity<Map> response = restTemplate.postForEntity("/api/checkout", request, Map.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -112,6 +110,37 @@ class CheckoutComponentControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);*/
     }
 
+    @Test
+    void checkoutValidRequestWithEmptyCartItems_returnsSuccessResponse() {
+        // Given
+        CheckoutRequest request = new CheckoutRequest();
+        request.setItems(List.of());
 
+        // When
+        ResponseEntity<Map> response = restTemplate.postForEntity("/api/checkout", request, Map.class);
 
+        //Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Disabled("TODO need to add exception for items with quantity 0")
+    @Test
+    void checkoutInvalidRequestWithQuantityZero_returnsBadRequest() {
+        // Given
+        CheckoutRequest request = new CheckoutRequest();
+        request.setItems(List.of(CartItem.builder()
+                .itemId("A")
+                .quantity(5)
+                .build(),
+            CartItem.builder()
+                .itemId("B")
+                .quantity(0)
+                .build()));
+
+        // When
+        ResponseEntity<Map> response = restTemplate.postForEntity("/api/checkout", request, Map.class);
+
+        //Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }

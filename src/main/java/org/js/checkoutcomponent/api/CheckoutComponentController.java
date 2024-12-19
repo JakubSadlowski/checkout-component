@@ -49,7 +49,7 @@ public class CheckoutComponentController {
         @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FailureResponse.class))),
         @ApiResponse(responseCode = "404", description = "Cart item not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FailureCartItemNotFoundResponse.class))),
         @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FailureResponse.class))) })
-    @PostMapping("/checkout")
+    @PostMapping("/checkout/v3")
     public ResponseEntity<CheckoutResponse> calculateTotal(@Parameter(description = "Checkout request with items", required = true) @Valid @RequestBody CheckoutRequest checkoutRequest) {
         calculateTotalInputValidation(checkoutRequest);
         try {

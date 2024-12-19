@@ -1,6 +1,5 @@
 package org.js.checkoutcomponent.config;
 
-import org.js.checkoutcomponent.errors.GlobalExceptionHandler;
 import org.js.checkoutcomponent.service.CheckoutService;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
 import org.js.checkoutcomponent.service.item.ItemsDAOImpl;
@@ -17,9 +16,5 @@ public class CheckoutConfig {
     @Bean
     public ItemsDAO getItemsDAO() {
         return new ItemsDAOImpl();
-    }
-
-    public GlobalExceptionHandler getGlobalExceptionHandler() {
-        return new GlobalExceptionHandler();
     }
 }

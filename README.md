@@ -38,9 +38,9 @@ Checkout REST service calculating total price of the items in a cart.
 
 # API Endpoints and methods
 
-| URIs        | Summary                                       | GET | PUT | POST               | DEL |
-|-------------|-----------------------------------------------|-----|-----|--------------------|-----|
-| `/checkout` | calculates total price of the items in a cart |     |     | :heavy_check_mark: |     |
+| URIs           | Summary                                       | GET | PUT | POST               | DEL |
+|----------------|-----------------------------------------------|-----|-----|--------------------|-----|
+| `/checkout/v3` | calculates total price of the items in a cart |     |     | :heavy_check_mark: |     |
 
 ## Getting Started
 

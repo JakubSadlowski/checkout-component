@@ -92,9 +92,8 @@ Below is an image from draw.io of the component checkout service.
 In this first implementation of checkout component version 3.0 database is mocked and populated for demonstration purposes
 Next steps for improvement:
 
-- Further improvements: Add Hibernate or MyBatis
-- Install Docker on AWS or Microsoft Azure
-- Set up container with chosen database image on Docker
+- Further improvements: Consider replacing H2 with MySQL or PostgreSQL
+- Make Docker image so the service could be installed on Kubernetes or in the cloud like AWS or Microsoft Azure
 
 ---
 

@@ -4,6 +4,8 @@ import lombok.extern.apachecommons.CommonsLog;
 import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
+import org.js.checkoutcomponent.service.item.mapper.ItemsMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +15,12 @@ import java.util.stream.Collectors;
 
 @CommonsLog
 public class ItemsDAOImpl implements ItemsDAO {
+    private final ItemsMapper itemsMapper;
+
+    @Autowired
+    public ItemsDAOImpl(ItemsMapper itemsMapper) {
+        this.itemsMapper = itemsMapper;
+    }
 
     @Override
     public Map<String, ItemEntity> getItems(Set<String> itemIds) {
@@ -20,7 +28,8 @@ public class ItemsDAOImpl implements ItemsDAO {
             .filter(e -> itemIds.contains(e.getId()))
             .collect(Collectors.toMap(ItemEntity::getId, item -> item));
 
-        log.debug("Items: " + Arrays.toString(items.values().toArray()));
+        log.debug("Items: " + Arrays.toString(items.values()
+            .toArray()));
 
         return items;
     }
@@ -31,7 +40,8 @@ public class ItemsDAOImpl implements ItemsDAO {
             .filter(e -> itemIds.contains(e.getItemId()))
             .collect(Collectors.toMap(ItemDiscountEntity::getItemId, discount -> discount));
 
-        log.debug("Discounts: " + Arrays.toString(discounts.values().toArray()));
+        log.debug("Discounts: " + Arrays.toString(discounts.values()
+            .toArray()));
 
         return discounts;
     }
@@ -42,20 +52,21 @@ public class ItemsDAOImpl implements ItemsDAO {
             .filter(e -> itemIds.contains(e.getFromItemId()) && itemIds.contains(e.getToItemId()))
             .collect(Collectors.toMap(BundleDiscountEntity::getId, bundle -> bundle));
 
-        log.debug("Bundle Discounts: " + Arrays.toString(bundleDiscounts.values().toArray()));
+        log.debug("Bundle Discounts: " + Arrays.toString(bundleDiscounts.values()
+            .toArray()));
 
         return bundleDiscounts;
     }
 
     private List<ItemEntity> getAllItems() {
-        return List.of(ItemsMockedRepository.ITEM_A, ItemsMockedRepository.ITEM_B, ItemsMockedRepository.ITEM_C, ItemsMockedRepository.ITEM_D, ItemsMockedRepository.ITEM_E);
+        return itemsMapper.fetchAllItems();
     }
 
     private List<ItemDiscountEntity> getAllItemDiscounts() {
-        return List.of(ItemsMockedRepository.DISCOUNT_A, ItemsMockedRepository.DISCOUNT_B, ItemsMockedRepository.DISCOUNT_C, ItemsMockedRepository.DISCOUNT_D);
+        return itemsMapper.fetchAllDiscounts();
     }
 
     private List<BundleDiscountEntity> getAllBundleDiscounts() {
-        return List.of(ItemsMockedRepository.BUNDLE_A_B, ItemsMockedRepository.BUNDLE_C_D);
+        return itemsMapper.fetchAllBundleDiscounts();
     }
 }

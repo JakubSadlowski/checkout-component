@@ -94,4 +94,25 @@ class CheckoutServiceTest {
             result.itemPrices()
                 .size());
     }
+
+    @Test
+    void checkForItemWithoutDiscountTest() {
+        // Given
+        Set<String> inputItemsIds = Set.of("A", "B");
+        when(itemsDAO.getItems(inputItemsIds)).thenReturn(Map.of("A", ItemsMock.ITEM_A, "B", ItemsMock.ITEM_B));
+        when(itemsDAO.getItemDiscounts(inputItemsIds)).thenReturn(Map.of("A", ItemsMock.DISCOUNT_A));
+
+        CheckoutRequest request = new CheckoutRequest();
+        request.setItems(List.of(new CartItem("A", 5), new CartItem("B", 6)));
+
+        // When
+        CheckoutService.Result result = checkoutService.calculateTotalPriceWithItemDiscountsAndBundles(request);
+
+        // Then
+        Assertions.assertEquals(new BigDecimal("230.0"), result.totalPrice());
+        Assertions.assertEquals(new BigDecimal("0"), result.bundleDiscount());
+        Assertions.assertEquals(2,
+            result.itemPrices()
+                .size());
+    }
 }

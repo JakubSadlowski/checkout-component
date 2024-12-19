@@ -151,4 +151,24 @@ class CheckoutComponentControllerTest {
         //Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
+    @Test
+    void checkoutInvalidRequestWithNonExistingItemInDatabase_returnsNotFound() {
+        // Given
+        CheckoutRequest request = new CheckoutRequest();
+        request.setItems(List.of(CartItem.builder()
+                .itemId("A")
+                .quantity(5)
+                .build(),
+            CartItem.builder()
+                .itemId("F")
+                .quantity(1)
+                .build()));
+
+        // When
+        ResponseEntity<Map> response = restTemplate.postForEntity("/api/checkout", request, Map.class);
+
+        //Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
 }

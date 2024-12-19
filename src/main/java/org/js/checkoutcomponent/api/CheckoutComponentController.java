@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.apachecommons.CommonsLog;
+import org.js.checkoutcomponent.errors.CartItemNotFoundException;
 import org.js.checkoutcomponent.errors.CartItemWithZeroOrLessQuantity;
 import org.js.checkoutcomponent.errors.InvalidRequestException;
 import org.js.checkoutcomponent.errors.ServiceGeneralException;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api")
 @Validated
+@CommonsLog
 @Tag(name = "checkout", description = "Checkout API")
 public class CheckoutComponentController {
     private final CheckoutService checkoutService;
@@ -44,16 +47,23 @@ public class CheckoutComponentController {
         @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CheckoutResponse.class))) })
     @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> calculateTotal(@Parameter(description = "Checkout request with items", required = true) @Valid @RequestBody CheckoutRequest checkoutRequest) {
-        if (hasRequestDuplicatedItems(checkoutRequest)) {
-            throw new InvalidRequestException("Some cart items are duplicated");
-        }
-        if (hasItemWithZeroOrLessQuantity(checkoutRequest)) {
-            throw new CartItemWithZeroOrLessQuantity("Some quantity of cart items is less than or equal to 0");
-        }
+        calculateTotalInputValidation(checkoutRequest);
         try {
             return ResponseEntity.ok(checkoutService.calculateTotalPrice(checkoutRequest));
+        } catch (CartItemNotFoundException e) {
+            log.error(e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new ServiceGeneralException("Unable to perform operation. Details: " + e.getMessage(), e);
+        }
+    }
+
+    private void calculateTotalInputValidation(CheckoutRequest checkoutRequest) {
+        if (hasRequestDuplicatedItems(checkoutRequest)) {
+            throw new InvalidRequestException("Some cart items are duplicated");
+        } else if (hasItemWithZeroOrLessQuantity(checkoutRequest)) {
+            throw new CartItemWithZeroOrLessQuantity("Some quantity of cart items is less than or equal to 0");
         }
     }
 

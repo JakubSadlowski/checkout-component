@@ -1,35 +1,50 @@
 package org.js.checkoutcomponent.service.item;
 
+import lombok.extern.apachecommons.CommonsLog;
 import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemDiscountEntity;
 import org.js.checkoutcomponent.service.item.entities.ItemEntity;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@CommonsLog
 public class ItemsDAOImpl implements ItemsDAO {
 
     @Override
     public Map<String, ItemEntity> getItems(Set<String> itemIds) {
-        return getAllItems().stream()
+        Map<String, ItemEntity> items = getAllItems().stream()
             .filter(e -> itemIds.contains(e.getId()))
             .collect(Collectors.toMap(ItemEntity::getId, item -> item));
+
+        log.debug("Items: " + Arrays.toString(items.values().toArray()));
+
+        return items;
     }
 
     @Override
     public Map<String, ItemDiscountEntity> getItemDiscounts(Set<String> itemIds) {
-        return getAllItemDiscounts().stream()
+        Map<String, ItemDiscountEntity> discounts = getAllItemDiscounts().stream()
             .filter(e -> itemIds.contains(e.getItemId()))
             .collect(Collectors.toMap(ItemDiscountEntity::getItemId, discount -> discount));
+
+        log.debug("Discounts: " + Arrays.toString(discounts.values().toArray()));
+
+        return discounts;
     }
 
     @Override
     public Map<String, BundleDiscountEntity> getBundleDiscounts(Set<String> itemIds) {
-        return getAllBundleDiscounts().stream()
+        Map<String, BundleDiscountEntity> bundleDiscounts = getAllBundleDiscounts().stream()
             .filter(e -> itemIds.contains(e.getFromItemId()) && itemIds.contains(e.getToItemId()))
             .collect(Collectors.toMap(BundleDiscountEntity::getId, bundle -> bundle));
+
+        log.debug("Bundle Discounts: " + Arrays.toString(bundleDiscounts.values().toArray()));
+
+        return bundleDiscounts;
     }
 
     private List<ItemEntity> getAllItems() {

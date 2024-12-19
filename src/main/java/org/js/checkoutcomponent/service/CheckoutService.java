@@ -1,5 +1,7 @@
 package org.js.checkoutcomponent.service;
 
+import lombok.extern.apachecommons.CommonsLog;
+import org.js.checkoutcomponent.errors.CartItemNotFoundException;
 import org.js.checkoutcomponent.model.CartItem;
 import org.js.checkoutcomponent.model.CheckoutRequest;
 import org.js.checkoutcomponent.model.CheckoutResponse;
@@ -13,12 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@CommonsLog
 public class CheckoutService {
     private ItemsDAO itemsDAO;
 
@@ -28,14 +32,18 @@ public class CheckoutService {
     }
 
     public CheckoutResponse calculateTotalPrice(CheckoutRequest request) {
-
+        log.info("Checkout component 3.0 request: " + request);
         Result result = calculateTotalPriceWithItemDiscountsAndBundles(request);
 
-        return CheckoutResponse.builder()
+        CheckoutResponse response = CheckoutResponse.builder()
             .totalPrice(result.totalPrice())
             .itemPrices(result.itemPrices())
             .bundleDiscountApplied(result.bundleDiscount())
             .build();
+
+        log.info("Response: " + response);
+
+        return response;
     }
 
     Result calculateTotalPriceWithItemDiscountsAndBundles(CheckoutRequest request) {
@@ -66,15 +74,19 @@ public class CheckoutService {
                 .price(calculatedPrice)
                 .build());
         }
+
+        log.info("Fetched items with discounts: " + Arrays.toString(itemPrices.toArray()));
+
         return itemPrices;
     }
 
     private Map<String, Item> getItemsWithDiscounts(Set<String> itemIds) {
         Map<String, Item> itemsWithDiscounts = new HashMap<>();
+        Map<String, ItemEntity> items = itemsDAO.getItems(itemIds);
+        validateIfAllInputItemsFoundInDatabase(itemIds, items.keySet());
 
         Map<String, ItemDiscountEntity> itemDiscounts = itemsDAO.getItemDiscounts(itemIds);
-        for (Map.Entry<String, ItemEntity> entry : itemsDAO.getItems(itemIds)
-            .entrySet()) {
+        for (Map.Entry<String, ItemEntity> entry : items.entrySet()) {
             ItemEntity itemEntity = entry.getValue();
             ItemDiscountEntity discount = itemDiscounts.get(itemEntity.getId());
             Item itemWithDiscount = Item.builder()
@@ -87,6 +99,14 @@ public class CheckoutService {
             itemsWithDiscounts.put(entry.getKey(), itemWithDiscount);
         }
         return itemsWithDiscounts;
+    }
+
+    private void validateIfAllInputItemsFoundInDatabase(Set<String> itemIds, Set<String> fetchedItemIds) {
+        for (String itemId : itemIds) {
+            if (!fetchedItemIds.contains(itemId)) {
+                throw new CartItemNotFoundException(String.format("Cart item %s not found in database.", itemId));
+            }
+        }
     }
 
     BigDecimal calculateItemPrice(Item item, int quantity) {

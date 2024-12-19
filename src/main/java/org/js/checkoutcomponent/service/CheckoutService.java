@@ -4,6 +4,7 @@ import org.js.checkoutcomponent.model.CartItem;
 import org.js.checkoutcomponent.model.CheckoutRequest;
 import org.js.checkoutcomponent.model.CheckoutResponse;
 import org.js.checkoutcomponent.model.ItemPrice;
+import org.js.checkoutcomponent.service.checkout.data.BundleDiscount;
 import org.js.checkoutcomponent.service.checkout.data.Item;
 import org.js.checkoutcomponent.service.item.ItemsDAO;
 import org.js.checkoutcomponent.service.item.entities.BundleDiscountEntity;
@@ -106,22 +107,35 @@ public class CheckoutService {
         BigDecimal totalDiscount = BigDecimal.ZERO;
         Map<String, Integer> itemQuantities = getItemsQuantities(request);
 
-        for (BundleDiscountEntity discount : bundleDiscountsMap.values()) {
+        List<BundleDiscount> bundleDiscounts = mapToBundleDiscounts(bundleDiscountsMap);
+
+        for (BundleDiscount discount : bundleDiscounts) {
             totalDiscount = totalDiscount.add(calculateSingleBundleDiscount(discount, itemQuantities));
         }
 
         return totalDiscount;
     }
 
-    private static BigDecimal calculateSingleBundleDiscount(BundleDiscountEntity discount, Map<String, Integer> itemQuantities) {
-        int firstItemQuantity = itemQuantities.getOrDefault(discount.getFromItemId(), 0);
-        int secondItemQuantity = itemQuantities.getOrDefault(discount.getToItemId(), 0);
+    private List<BundleDiscount> mapToBundleDiscounts(Map<String, BundleDiscountEntity> bundleDiscountsMap) {
+        return bundleDiscountsMap.values()
+            .stream()
+            .map(entity -> BundleDiscount.builder()
+                .firstItemID(entity.getFromItemId())
+                .secondItemID(entity.getToItemId())
+                .discount(entity.getDiscountPrice())
+                .build())
+            .collect(Collectors.toList());
+    }
+
+    private static BigDecimal calculateSingleBundleDiscount(BundleDiscount discount, Map<String, Integer> itemQuantities) {
+        int firstItemQuantity = itemQuantities.getOrDefault(discount.getFirstItemID(), 0);
+        int secondItemQuantity = itemQuantities.getOrDefault(discount.getSecondItemID(), 0);
         if (firstItemQuantity == 0 || secondItemQuantity == 0) {
             return BigDecimal.ZERO;
         }
 
         int pairs = Math.min(firstItemQuantity, secondItemQuantity);
-        return discount.getDiscountPrice()
+        return discount.getDiscount()
             .multiply(BigDecimal.valueOf(pairs));
     }
 

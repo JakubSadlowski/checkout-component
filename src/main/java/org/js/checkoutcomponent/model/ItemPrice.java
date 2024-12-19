@@ -14,7 +14,7 @@ public class ItemPrice {
     @Schema(name = "itemId", example = "A", description = "Product identifier")
     private String itemId;
     @NotNull
-    @Schema(name = "quantity", example = "2", description = "Number of items")
+    @Schema(name = "quantity", example = "3", description = "Number of items")
     private int quantity;
     private BigDecimal price;
 }

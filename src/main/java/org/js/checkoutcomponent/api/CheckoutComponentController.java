@@ -53,7 +53,7 @@ public class CheckoutComponentController {
         try {
             return ResponseEntity.ok(checkoutService.calculateTotalPrice(checkoutRequest));
         } catch (Exception e) {
-            throw new ServiceGeneralException("Unable to perform operation. Details: " + e.getMessage(), e);
+            throw new ServiceGeneralException("Unable to perform operation.", e);
         }
     }
 

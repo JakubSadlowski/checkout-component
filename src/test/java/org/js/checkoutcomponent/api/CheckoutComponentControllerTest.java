@@ -5,7 +5,6 @@ import org.js.checkoutcomponent.model.CheckoutRequest;
 import org.js.checkoutcomponent.model.CheckoutResponse;
 import org.js.checkoutcomponent.model.ItemPrice;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -123,7 +122,6 @@ class CheckoutComponentControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
-    @Disabled("TODO need to add exception for items with quantity 0")
     @Test
     void checkoutInvalidRequestWithQuantityZero_returnsBadRequest() {
         // Given
@@ -135,6 +133,26 @@ class CheckoutComponentControllerTest {
             CartItem.builder()
                 .itemId("B")
                 .quantity(0)
+                .build()));
+
+        // When
+        ResponseEntity<Map> response = restTemplate.postForEntity("/api/checkout", request, Map.class);
+
+        //Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void checkoutInvalidRequestWithQuantityLessThanZero_returnsBadRequest() {
+        // Given
+        CheckoutRequest request = new CheckoutRequest();
+        request.setItems(List.of(CartItem.builder()
+                .itemId("A")
+                .quantity(5)
+                .build(),
+            CartItem.builder()
+                .itemId("B")
+                .quantity(-1)
                 .build()));
 
         // When

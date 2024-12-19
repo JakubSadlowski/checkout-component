@@ -31,4 +31,10 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = Map.of(KEY_MESSAGE, "An unexpected error occurred", KEY_ERROR, ex.getMessage(), KEY_TIMESTAMP, System.currentTimeMillis());
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(CartItemWithZeroOrLessQuantity.class)
+    public ResponseEntity<Object> handleCartItemWithZeroOrLessQuantity(CartItemWithZeroOrLessQuantity ex, WebRequest request) {
+        Map<String, Object> body = Map.of(KEY_MESSAGE, ex.getMessage(), KEY_TIMESTAMP, System.currentTimeMillis());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 }

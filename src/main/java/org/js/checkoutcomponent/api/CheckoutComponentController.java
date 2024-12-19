@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.js.checkoutcomponent.errors.CartItemWithZeroOrLessQuantity;
 import org.js.checkoutcomponent.errors.InvalidRequestException;
 import org.js.checkoutcomponent.errors.ServiceGeneralException;
 import org.js.checkoutcomponent.model.CartItem;
@@ -48,6 +49,9 @@ public class CheckoutComponentController {
         if (hasRequestDuplicatedItems(checkoutRequest)) {
             throw new InvalidRequestException("Some cart items are duplicated");
         }
+        if (hasItemWithZeroOrLessQuantity(checkoutRequest)) {
+            throw new CartItemWithZeroOrLessQuantity("Some quantity of cart items is less than or equal to 0");
+        }
         try {
             return ResponseEntity.ok(checkoutService.calculateTotalPrice(checkoutRequest));
         } catch (Exception e) {
@@ -63,5 +67,11 @@ public class CheckoutComponentController {
             .collect(Collectors.toSet())
             .size();
         return numberOfItems != numberOfUniqueItems;
+    }
+
+    private boolean hasItemWithZeroOrLessQuantity(@Valid CheckoutRequest checkoutRequest) {
+        List<CartItem> items = checkoutRequest.getItems();
+        return items.stream()
+            .anyMatch(item -> item.getQuantity() <= 0);
     }
 }
